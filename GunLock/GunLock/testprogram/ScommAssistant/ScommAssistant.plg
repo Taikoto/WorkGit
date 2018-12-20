@@ -1,0 +1,33 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: ScommAssistant - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x804 /fo"Debug/ScommAssistant.res" /d "_DEBUG" /d "_AFXDLL" "E:\workspace\À¯≤‚ ‘≥Ã–Ú\ScommAssistant\ScommAssistant.rc"" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP6007.tmp" with contents
+[
+/nologo /subsystem:windows /incremental:yes /pdb:"Debug/ScommAssistant.pdb" /debug /machine:I386 /out:"Debug/ScommAssistant.exe" /pdbtype:sept 
+".\Debug\mscomm.obj"
+".\Debug\ScommAssistant.obj"
+".\Debug\ScommAssistantDlg.obj"
+".\Debug\StdAfx.obj"
+".\Debug\ScommAssistant.res"
+]
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP6007.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Linking...
+Creating command line "bscmake.exe /nologo /o"Debug/ScommAssistant.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\mscomm.sbr" ".\Debug\ScommAssistant.sbr" ".\Debug\ScommAssistantDlg.sbr""
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+ScommAssistant.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

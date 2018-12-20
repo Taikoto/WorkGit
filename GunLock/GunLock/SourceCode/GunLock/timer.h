@@ -1,0 +1,8 @@
+#ifndef __TIMER1_H__
+#define __TIMER1_H__
+
+EXTERN_C VOID TMR1Init(VOID);
+EXTERN_C VOID TMR2Init(VOID);
+EXTERN_C VOID TMR3Init(VOID);
+
+#endif

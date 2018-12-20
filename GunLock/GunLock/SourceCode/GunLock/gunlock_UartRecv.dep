@@ -1,0 +1,7 @@
+Dependencies for Project 'gunlock', Target 'UartRecv': (DO NOT MODIFY !)
+F (.\main.c)(0x57B67117)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I..\Include -I D:\Keil\ARM\RV31\Inc -I D:\Keil\ARM\CMSIS\Include -o ".\output\main.o" --omf_browse ".\output\main.crf" --depend ".\output\main.d")
+I (SmartM_M0.h)(0x4DFC567C)
+F (..\Common\common.c)(0x57773B4C)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I..\Include -I "D:\Keil4\ARM\INC" -I "D:\Keil4\ARM\INC\Nuvoton" -o ".\output\common.o" --omf_browse ".\output\common.crf" --depend ".\output\common.d")
+F (..\Common\retarget.c)(0x4C71DCA4)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I..\Include -I "D:\Keil4\ARM\INC" -I "D:\Keil4\ARM\INC\Nuvoton" -o ".\output\retarget.o" --omf_browse ".\output\retarget.crf" --depend ".\output\retarget.d")
+F (..\Common\startup_M051.s)(0x4EF6CB56)(--cpu Cortex-M0 -g --apcs=interwork -I "D:\Keil4\ARM\INC" -I "D:\Keil4\ARM\INC\Nuvoton" --list ".\startup_M051.lst" --xref -o ".\output\startup_M051.o" --depend ".\output\startup_M051.d")
+F (.\readme.txt)(0x57B50381)()

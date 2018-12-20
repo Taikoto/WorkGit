@@ -1,0 +1,139 @@
+Dependencies for Project 'gunlock', Target 'gun_lock': (DO NOT MODIFY !)
+F (.\main.c)(0x5A336B98)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\main.o" --omf_browse ".\output\main.crf" --depend ".\output\main.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdlib.h)(0x50F96150)
+I (74ls164.h)(0x58D15B66)
+I (HX711.h)(0x58D15B5C)
+I (lock.h)(0x58D15B5A)
+I (i2c.h)(0x58D15B5B)
+I (rs485.h)(0x58D15B58)
+I (led.h)(0x58D15B5B)
+I (watchdog.h)(0x58D15B47)
+I (timer.h)(0x58D15B51)
+F (..\Common\common.c)(0x58D15B6D)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\common.o" --omf_browse ".\output\common.crf" --depend ".\output\common.d")
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+F (..\Common\retarget.c)(0x58D15B6C)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\retarget.o" --omf_browse ".\output\retarget.crf" --depend ".\output\retarget.d")
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+F (..\Common\startup_M051.s)(0x58D15B6C)(--cpu Cortex-M0 -g --apcs=interwork -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series --list ".\startup_M051.lst" --xref -o ".\output\startup_M051.o" --depend ".\output\startup_M051.d")
+F (.\74ls164.c)(0x58D15B68)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\74ls164.o" --omf_browse ".\output\74ls164.crf" --depend ".\output\74ls164.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (74ls164.h)(0x58D15B66)
+F (.\hx711.c)(0x58D15B5D)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\hx711.o" --omf_browse ".\output\hx711.crf" --depend ".\output\hx711.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (HX711.h)(0x58D15B5C)
+F (.\i2c.c)(0x58D15B5D)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\i2c.o" --omf_browse ".\output\i2c.crf" --depend ".\output\i2c.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (i2c.h)(0x58D15B5B)
+F (.\rs485.c)(0x58D15B58)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\rs485.o" --omf_browse ".\output\rs485.crf" --depend ".\output\rs485.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (rs485.h)(0x58D15B58)
+F (.\led.c)(0x58D15B5D)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\led.o" --omf_browse ".\output\led.crf" --depend ".\output\led.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (led.h)(0x58D15B5B)
+F (.\lock.c)(0x58ECD0DA)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\lock.o" --omf_browse ".\output\lock.crf" --depend ".\output\lock.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (lock.h)(0x58D15B5A)
+F (.\watchdog.c)(0x58D15B47)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\watchdog.o" --omf_browse ".\output\watchdog.crf" --depend ".\output\watchdog.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (watchdog.h)(0x58D15B47)
+F (.\timer.c)(0x58D15B52)(-c --cpu Cortex-M0 -g -O3 --apcs=interwork -I..\Include -I D:\Keil_v4\ARM\RV31\INC -I D:\Keil_v4\ARM\CMSIS\Include -I D:\Keil_v4\ARM\Inc\Nuvoton\M051Series -o ".\output\timer.o" --omf_browse ".\output\timer.crf" --depend ".\output\timer.d")
+I (SmartM_M0.h)(0x58D15B56)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdint.h)(0x50F96150)
+I (..\Include\M051.h)(0x58D15B6B)
+I (..\Include\Register_Bit.h)(0x58D15B6C)
+I (..\Include\Common.h)(0x58D15B6C)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h)(0x50F96150)
+I (D:\Keil_v4\ARM\ARMCC\bin\..\include\string.h)(0x50F96150)
+I (..\Include\Uart.h)(0x58D15B68)
+I (..\Include\Macro_SystemClock.h)(0x58D15B6A)
+I (..\Include\Macro_Timer.h)(0x58D15B6A)
+I (..\Include\Typedef.h)(0x58D15B69)
+I (timer.h)(0x58D15B51)
+F (.\readme.txt)(0x58D15B59)()
