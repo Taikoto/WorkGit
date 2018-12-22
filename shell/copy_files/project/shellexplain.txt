@@ -1,0 +1,9 @@
+projectdel.sh这个脚本执行时，
+(1)会先执行fileRestoryDefault.sh把default下面的defaultFiles这个文件夹里面的文件，
+替换源码同名文件，使源码恢复到默认状态，
+(2)然后再执行:
+fileAppendMerge.sh,这个暂时没有功能
+fileCompareMerge.sh(这个是文件内容的比较差异部分替换)
+fileReplace.sh(这个是整个文件替换)
+三个脚本,把每个项目下的文件按照脚本规则来处理
+(3)最终这四个脚本会根据要编译的项目修改我们要修改的文件内容，然后在执行后面的编译
