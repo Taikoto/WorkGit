@@ -1,0 +1,163 @@
+#!/bin/bash
+
+BS_DIR_TOP=$(cd `dirname $0` ; pwd)
+ANDROID_BUILD_SRC=$(cd `dirname $0`; pwd)
+BS_DIR_SRC=../${BS_DIR_TOP}
+
+BS_DIR_RELEASE=${BS_DIR_TOP}/release-sp9820e_s01
+BS_DIR_UBOOT=${BS_DIR_TOP}/u-boot15
+BS_DIR_KERNEL=${BS_DIR_TOP}/kernel
+BS_DIR_IMG=${BS_DIR_TOP}/out/target/product/sp9820e_2h10
+
+#TARGET_PRODUCT="sp9820e_2h10_native"
+#TARGET_BUILD_VARIANT="userdebug"
+BOARD="sp9820e_2h10_native-userdebug"
+BOARD=$(cat Boardinfo.ini)
+
+#BOARD=$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
+
+setup_environment()
+{
+        source ./build/setjavaversion.sh;
+	source build/envsetup.sh;
+        lunch ${BOARD}
+        #kheader  
+        #IDH_PROP_ZIP=vendor/sprd/release/IDH/proprietories-${BOARD}.zip 
+}
+
+build_chipram()
+{
+        make chipram 2>&1 | tee chipram.log || return 1
+	echo "^_^ chipram path: ${BS_DIR_IMG}/fdl1-sign.bin u-boot-spl-16k-sign.bin"
+	return 0
+}
+
+build_bootloader_uboot()
+{
+	make bootloader 2>&1 | tee uboot.log || return 1
+  
+	echo "^_^ uboot path: ${BS_DIR_IMG}/u-boot-sign.bin"
+	return 0
+}
+
+build_userdata()
+{
+	make userdataimage 2>&1 | tee userdata.log || return 1
+  
+	echo "^_^ userdata path: ${BS_DIR_IMG}/userdata.bin"
+	return 0
+}
+
+build_system()
+{
+        make systemimage 2>&1 | tee system.log || return 1
+	echo "^_^ system path: ${BS_DIR_IMG}/system.img"
+	return 0
+}
+
+build_kernel()
+{
+        make bootimage 2>&1 | tee kernel.log || return 1
+	echo "^_^ kernel path: ${BS_DIR_IMG}/boot.img"
+	return 0
+}
+
+build_all()
+{
+	make -j${threads} 2>&1 | tee build.log || return 1
+
+	echo "^_^ release path: ${BS_DIR_RELEASE}"
+  
+	return 0
+}
+
+
+threads=20
+uboot=no
+kernel=no
+system=no
+chipram=no
+userdata=no
+all=no
+
+if [ -z $1 ]; then
+	all=yes
+fi
+
+while [ "$1" ]; do
+    case "$1" in
+	-j*)
+		x=$1
+		threads=${x#-j}
+		;;
+	-u|-uboot)
+		uboot=yes
+	    ;;
+	-k|-kernel)
+	        kernel=yes
+	    ;;
+	-s|-system)
+	        system=yes
+	    ;;
+	-r|-chipram)
+	        chipram=yes
+	    ;;
+	-d|-userdata)
+	        userdata=yes
+	    ;;
+	-a|-all)
+                all=yes
+	    ;;
+	-h|-help)
+	    cat >&2 <<EOF
+Usage: ./mk [OPTION]
+Build script for compile the source of telechips project.
+
+  -j=n                using n threads when building source project (example: -j=16)
+  -u, -uboot          build bootloader uboot from source
+  -k, -kernel         build kernel from source
+  -s, -system         build system from source
+  -d, -userdata       build userdata from source
+  -r, -chipram        build chipram from source
+  -a, -all            build all, include anything
+  -h, -help           display this help and exit
+  note : default build all 
+  
+EOF
+	    exit 0
+	    ;;
+	*)
+	    echo "./mk: Unrecognised option $1" >&2
+	    exit 1
+	    ;;
+    esac
+    shift
+done
+
+setup_environment || exit 1
+
+if [ "${uboot}" = yes ]; then
+	build_bootloader_uboot || exit 1
+fi
+
+if [ "${kernel}" = yes ]; then
+	build_kernel || exit 1
+fi
+
+if [ "${system}" = yes ]; then
+	build_system || exit 1
+fi
+
+if [ "${chipram}" = yes ]; then
+	build_chipram || exit 1
+fi
+
+if [ "${userdata}" = yes ]; then
+	build_userdata || exit 1
+fi
+
+if [ "${all}" = yes ]; then
+	build_all || exit 1
+fi
+
+exit 0

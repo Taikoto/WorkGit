@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#TARGET_PRODUCT="sp9820e_2h10_oversea"
+#TARGET_BUILD_VARIANT="userdebug"
+SRC_DIR=$(cd `dirname $0` ; pwd)
+PAC_DIR="$SRC_DIR/vendor/sprd/release/PAC_Resource/Scripts"
+
+BOARD=$(cat Boardinfo.ini)
+TARGET_PRODUCT=${BOARD%-*}
+TARGET_BUILD_VARIANT=${BOARD#*-}
+
+
+source $PAC_DIR/make_pac.sh  $TARGET_PRODUCT $TARGET_BUILD_VARIANT
