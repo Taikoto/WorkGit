@@ -78,13 +78,16 @@ sub package_bin
     my @l_database_dirs = (
         # 'mediatek/cgen',
         # "mediatek/config/out/$p_prj_name_mtk/modem",
-        "$p_dir_bin/obj/ETC",                  # MT6735, MT6737, etc/mddb 的文件
-        "$p_dir_bin/obj/CGEN",                  # MT6735, MT6737
+        # "$p_dir_bin/obj/ETC",                  # MT6735, MT6737, etc/mddb 的文件
+        "$p_dir_bin/vendor/etc/mddb",          # MT6739
+        "$p_dir_bin/obj/CGEN",                 # MT6735, MT6737
     );
 
     my @l_database_file_regulation = (
         'APDB_',
         'BPLGUInfoCustomAppSrcP_',
+        'MDDB_InfoCustomAppSrcP_',
+        'DbgInfo_',
     );
 
     # OTA 文件目录
@@ -228,6 +231,7 @@ sub package_bin
 
             # 读取 bin 版本号
             my $bin_version = '';
+            my $bin_internal_version = '';
             if (-f $build_prop_file_path) {
                 my $FILE_BUILD_PROP = $g_util->open_text_file( '<', $build_prop_file_path );
                 my @build_prop = <$FILE_BUILD_PROP>;
@@ -235,13 +239,21 @@ sub package_bin
                 
                 foreach my $line (@build_prop) {
                     # ro.build.display.id=V002
+                    # ro.internal.build.version=V003
                     mylog($line);
-                    if ($line =~ /^\s*ro\.build\.display\.id=\s*(.*)\s*/i) {
-                        $bin_version = $1;
+
+                    if ($bin_internal_version eq '' && $line =~ /^\s*ro\.internal\.build\.version=\s*(.*)\s*/i) {
+                        $bin_internal_version = $1;
                         last;
+                    }
+
+                    if ($bin_version eq '' && $line =~ /^\s*ro\.build\.display\.id=\s*(.*)\s*/i) {
+                        $bin_version = $1;
                     }
                 }
             }
+
+            $bin_version = $bin_internal_version if ($bin_internal_version ne '');
 
             my $archive_base_name =  sprintf("%s%s_%s_%s_%s", $p_prj_name, '_' . $bin_version, $p_build_mode, $author, $c_date_time);
             $archive_name = build_archive_name($method_id, $archive_base_name);

@@ -92,7 +92,7 @@ my $enBuildConfig = ( -e $buildConfigIni ) ? 1 : 0;   # 已启用'编译命令�
 my $userConfirmDelaySec = 30;           # 用户确认编译参数的时间（秒）
 
 my $project = "";
-my $buildMode = "userdebug";          # 默认编译模式
+my $buildMode = "";          # 默认编译模式
 my $product = "";
 my $action  = "";
 
@@ -220,13 +220,15 @@ sub main
         }
         showMessageLn("################################");
 
-        if (exists($gBuildConfigHashMap{'project'})) {
+        if ($project eq '' && exists($gBuildConfigHashMap{'project'})) {
             $project = $gBuildConfigHashMap{'project'};
         }
         
-        if (exists($gBuildConfigHashMap{'buildMode'})) {
+        if ($buildMode eq '' && exists($gBuildConfigHashMap{'buildMode'})) {
             $buildMode = $gBuildConfigHashMap{'buildMode'};
         }      
+    } else {
+        $buildMode = 'userdebug';
     }
     
     mylogln("project: " . $project);
@@ -459,7 +461,9 @@ sub main
                     $makeCmd .= 'cd ' . $mmPath . "\n";
                     $makeCmd .= "mm\n";
                     $makeCmd .= 'cd ' . $rootDir . "\n";
-                    $makeCmd .= $baseCmd . $snod;
+                    if ($snod ne '') {
+                        $makeCmd .= $baseCmd . $snod . "\n";
+                    }
                 } else {
                     if ($uAct =~ /^(new|clean|remake)$/) {
                         $makeCmd .= $baseCmd;
@@ -484,31 +488,36 @@ sub main
             }
         }
 
-        if (!$error and buildShellFile($shellFile, $makeCmd)) {
-            # 延时执行
-            if ($delaySeconds > 0) {
-                my $currTime = Time::Piece->new;
-                my $nextTime   = $currTime + ($delaySeconds);
-                showMessageLn("已就绪！将于 " . $nextTime->strftime("%Y.%m.%d %H:%M") . ' 执行编译 (现在时间: ' . $currTime->strftime("%Y.%m.%d %H:%M") .')');
-                showMessageLn('<Ctrl+C>取消执行');
+        my $binPath = catfile($packageBinConfigHashMap{'sourceBase'}, $prjConfigHaseMap{'mtk_model'});
 
-                # 不能使用 perl sleep 函数，结束前，此前输出到命令行窗口的内容不显示
-                system("sleep ".$delaySeconds);  
-            }
+        if (!$error and (!($isPackage && @acts == 1))) {
+            # 如果只是打包, 则不需要生成并执行 shell 脚本
+            if (buildShellFile($shellFile, $makeCmd)) {
+                # 延时执行
+                if ($delaySeconds > 0) {
+                    my $currTime = Time::Piece->new;
+                    my $nextTime   = $currTime + ($delaySeconds);
+                    showMessageLn("已就绪！将于 " . $nextTime->strftime("%Y.%m.%d %H:%M") . ' 执行编译 (现在时间: ' . $currTime->strftime("%Y.%m.%d %H:%M") .')');
+                    showMessageLn('<Ctrl+C>取消执行');
 
-            my $binPath = catfile($packageBinConfigHashMap{'sourceBase'}, $prjConfigHaseMap{'mtk_model'});
-            $error = runSystemCmd($binListHashMap{'shell'} . ' ' . $shellFile);
-            if (!$error and $isPackage){
-                my $archivePath = package_bin($releaseName, $binPath, $releasePath, $buildMode, $packageBinConfigHashMap{'includeDatabase'}, $prjConfigHaseMap{'mtk_product'}, $isOta);
-                if ($archivePath ne ""){
-                    $archivePath =~ s/$gPublicConfigHashMap{'basePath'}/$gPublicConfigHashMap{'basePathWin'}/;
-                    $archivePath =~ s#/#\\#g;
-                    showMessageLn('释放路径：' . $archivePath);
+                    # 不能使用 perl sleep 函数，结束前，此前输出到命令行窗口的内容不显示
+                    system("sleep ".$delaySeconds);  
                 }
-            }
 
-            # 清除所有 verified 的 bin，下载工具会自动选择这些 bin 下载，导致软件异常
-            system("rm -f $binPath/*verified*");
+                $error = runSystemCmd($binListHashMap{'shell'} . ' ' . $shellFile);
+
+                # 清除所有 verified 的 bin，下载工具会自动选择这些 bin 下载，导致软件异常
+                system("rm -f $binPath/*verified*");
+            }
+        }
+
+        if (!$error and $isPackage){
+            my $archivePath = package_bin($releaseName, $binPath, $releasePath, $buildMode, $packageBinConfigHashMap{'includeDatabase'}, $prjConfigHaseMap{'mtk_product'}, $isOta);
+            if ($archivePath ne ""){
+                $archivePath =~ s/$gPublicConfigHashMap{'basePath'}/$gPublicConfigHashMap{'basePathWin'}/;
+                $archivePath =~ s#/#\\#g;
+                showMessageLn('释放路径：' . $archivePath);
+            }
         }
 
         showMessageLn("================\n主进程结束了") if ($debug);

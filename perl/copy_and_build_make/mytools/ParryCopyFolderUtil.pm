@@ -145,7 +145,7 @@ sub copyFile
     my $l_to_file = $p_to;
 
     # 检查源文件是否存在
-    my $l_error = ! -e $l_from_file;
+    my $l_error = !(-f $l_from_file);
     if($l_error)
     {
         mylogln("!!! 来源文件不存在! $l_from_file");
@@ -163,9 +163,9 @@ sub copyFile
             if (compare($l_from_file, $l_to_file) == 0) {  # 结果为 0 是相同
                 $need_copy = 0;
                 mylogln("!!! 目标文件内容相同，不复制！" . $l_from_file . ' => ' . $l_to_file);
-                # showMessageLn($l_from_file." 目标文件内容相同，不复制！");
                 return 1;
             }
+            $l_to_dir = catfile(just_fname_path($l_to_file), '');  # 截取路径
         }
         else
         {
@@ -176,12 +176,11 @@ sub copyFile
                 if (compare($l_from_file, $l_to_file) == 0) { # 结果为 0 是相同
                     $need_copy = 0;
                     mylogln("!!! 目标文件内容相同，不复制！" . $l_from_file . ' => ' . $l_to_file);
-                    # showMessageLn($l_from_file." 目标文件内容相同，不复制！");
                     return 1;
                 }
             } else {
                 # 如果目标路径不是文件和目录，则截取路径并创建目录
-                $l_to_dir = just_fname_path($l_to_file) . '/';  # 截取路径
+                $l_to_dir = catfile(just_fname_path($l_to_file), '');  # 截取路径
 
                 if (! -d $l_to_dir)
                 {
