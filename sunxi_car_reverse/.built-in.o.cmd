@@ -1,0 +1,1 @@
+cmd_drivers/media/platform/sunxi_car_reverse/built-in.o :=  /homessd/jieyouxing/t7/T7auto_stable/lichee/out/gcc-linaro-5.3.1-2016.05/gcc-arm/bin/arm-linux-gnueabi-ld -EL    -r -o drivers/media/platform/sunxi_car_reverse/built-in.o drivers/media/platform/sunxi_car_reverse/sunxi_car_reverse.o 

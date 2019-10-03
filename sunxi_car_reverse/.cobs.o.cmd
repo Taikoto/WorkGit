@@ -1,0 +1,10 @@
+cmd_drivers/media/platform/sunxi_car_reverse/cobs.o := /homessd/jieyouxing/t7/T7auto_stable/lichee/out/gcc-linaro-5.3.1-2016.05/gcc-arm/bin/arm-linux-gnueabi-gcc -Wp,-MD,drivers/media/platform/sunxi_car_reverse/.cobs.o.d  -nostdinc -isystem /homessd/jieyouxing/t7/T7auto_stable/lichee/out/gcc-linaro-5.3.1-2016.05/gcc-arm/bin/../lib/gcc/arm-linux-gnueabi/5.3.1/include -I./arch/arm/include -I./arch/arm/include/generated/uapi -I./arch/arm/include/generated  -I./include -I./arch/arm/include/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-sunxi/include -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -fno-PIE -fno-dwarf2-cfi-asm -fno-omit-frame-pointer -mapcs -mno-sched-prolog -fno-ipa-sra -mabi=aapcs-linux -mno-thumb-interwork -mfpu=vfp -funwind-tables -marm -D__LINUX_ARM_ARCH__=7 -march=armv7-a -Uarm -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -DCC_HAVE_ASM_GOTO -Wframe-larger-than=2048 -fstack-protector-strong -Wno-unused-but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -g -pg -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -Werror=incompatible-pointer-types    -DKBUILD_BASENAME='"cobs"'  -DKBUILD_MODNAME='"sunxi_car_reverse"' -c -o drivers/media/platform/sunxi_car_reverse/.tmp_cobs.o drivers/media/platform/sunxi_car_reverse/cobs.c
+
+source_drivers/media/platform/sunxi_car_reverse/cobs.o := drivers/media/platform/sunxi_car_reverse/cobs.c
+
+deps_drivers/media/platform/sunxi_car_reverse/cobs.o := \
+  drivers/media/platform/sunxi_car_reverse/cobs.h \
+
+drivers/media/platform/sunxi_car_reverse/cobs.o: $(deps_drivers/media/platform/sunxi_car_reverse/cobs.o)
+
+$(deps_drivers/media/platform/sunxi_car_reverse/cobs.o):
