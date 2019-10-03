@@ -20,6 +20,8 @@
 #include <asm/cacheflush.h>
 #include <asm/glue-cache.h>
 #include "evs_communication.h"
+#include <linux/ktime.h>
+#include <linux/time.h>
 
 
 extern bmp_img_t bmp_img;
@@ -486,6 +488,9 @@ extern int parse_data_idx[5];
 extern int parse_data[5];
 //extern unsigned char parse_data_type[5];
 
+struct timeval start,end;
+
+
 #if 0
 int print_parse_mcu_data(int num)
 {
@@ -516,10 +521,13 @@ int print_parse_mcu_data(int num)
 
 void select_picture(void *base)
 {
+    //do_gettimeofday(&start);
+	
     //printk("car_status_flag = %d\r\n",car_status_flag);
 
     if(car_status_flag) {
 		//print_parse_mcu_data(5);
+	do_gettimeofday(&start);
     snprintf(bmp_img.carmodel_path, sizeof(bmp_img.carmodel_path), "/system/usr/carmodel.bmp");    
 	snprintf(bmp_img.line_path, sizeof(bmp_img.line_path), "/system/usr/line_%d.bmp", parse_data_idx[LINE_PIC]);
 	snprintf(bmp_img.radar_r_path, sizeof(bmp_img.radar_r_path), "/system/usr/radar_r_%d.bmp", parse_data_idx[R_RADAR_PIC]);
@@ -612,8 +620,11 @@ void select_picture(void *base)
 	dmac_flush_range(base, base+1920*720*4);
 	car_status_flag = 0;
 	printk("a frame finnished\r\n");
+	do_gettimeofday(&end);
     }
 	
+    //do_gettimeofday(&end);
+	printk("spend %d ms\r\n",(end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000));
 }
 
 #if 0

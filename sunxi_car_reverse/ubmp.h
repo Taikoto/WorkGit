@@ -22,6 +22,11 @@ freely, subject to the following restrictions:
 #if !defined(UBMP_H)
 #define UBMP_H
 
+#include <linux/dmaengine.h>
+#include <linux/wait.h>
+#include <linux/string.h>
+#include <linux/dma-mapping.h>
+
 #define AUXLAYER_WIDTH (1920)
 #define AUXLAYER_HEIGHT (720)
 #define AUXLAYER_SIZE (AUXLAYER_WIDTH * AUXLAYER_HEIGHT * 4)
@@ -151,6 +156,33 @@ typedef struct bmp_img_s{
     int argb_bit;
 } bmp_img_t;
 
+typedef struct dma_phy_s{
+	dma_addr_t dma_line_src;
+	dma_addr_t dma_line_dest;
+	dma_addr_t dma_carmodel_src;
+    dma_addr_t dma_carmodel_dest;
+	
+	dma_addr_t dma_radar_r_g_dest;
+	dma_addr_t dma_radar_r_g_src;
+	dma_addr_t dma_radar_m_g_dest;
+	dma_addr_t dma_radar_m_g_src;
+	dma_addr_t dma_radar_l_g_dest;
+	dma_addr_t dma_radar_l_g_src;
+	
+	dma_addr_t dma_radar_r_o_dest;
+	dma_addr_t dma_radar_r_o_src;
+	dma_addr_t dma_radar_m_o_dest;
+	dma_addr_t dma_radar_m_o_src;
+	dma_addr_t dma_radar_l_o_dest;
+	dma_addr_t dma_radar_l_o_src;
+
+	dma_addr_t dma_radar_r_r_dest;
+	dma_addr_t dma_radar_r_r_src;
+	dma_addr_t dma_radar_m_r_dest;
+	dma_addr_t dma_radar_m_r_src;
+	dma_addr_t dma_radar_l_r_dest;
+	dma_addr_t dma_radar_l_r_src;
+} dma_phy_t;
 
 int init_picture(void);
 int alloc_memery(void); 

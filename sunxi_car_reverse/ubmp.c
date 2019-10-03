@@ -16,6 +16,7 @@
 
 
 bmp_img_t bmp_img;
+dma_phy_t dma_phy;
 
 
 int init_picture(void)
@@ -52,7 +53,7 @@ int init_picture(void)
 	return 0;
 }
 
-
+#if 0
 int alloc_memery(void)
 {
 	/*
@@ -186,10 +187,147 @@ int alloc_memery(void)
 
 	printk("%s Exit\r\n",__FUNCTION__);
 	return 0;
-} 
+}
+#else
+int alloc_memery(void)
+{
+	/*
+	alloc rgb analysis_pictures memery
+	alloc argb analysis_pictures memery
+	alloc rgb radar_pictures memery
+	alloc argb radar_pictures memery
+	*/
+	
+	printk("%s Enter\r\n",__FUNCTION__);
+	
+	bmp_img.line_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.line_w*bmp_img.line_h, &dma_phy.dma_line_src, GFP_KERNEL);
+	if (bmp_img.line_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.line_w,bmp_img.line_h);
+		return -1;
+	}
+	
+	bmp_img.line_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.line_w*bmp_img.line_h, &dma_phy.dma_line_dest, GFP_KERNEL);
+	if (bmp_img.line_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.line_w,bmp_img.line_h);
+		return -1;
+	}
+
+	bmp_img.carmodel_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.carmodel_w*bmp_img.carmodel_h, &dma_phy.dma_carmodel_src, GFP_KERNEL);
+	if (bmp_img.carmodel_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.carmodel_w,bmp_img.carmodel_h);
+		return -1;
+	}
+	
+	bmp_img.carmodel_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.carmodel_w*bmp_img.carmodel_h, &dma_phy.dma_carmodel_dest, GFP_KERNEL);
+	if (bmp_img.carmodel_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.carmodel_w,bmp_img.carmodel_h);
+		return -1;
+	}
+
+	bmp_img.radar_r_g_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_r_g_w*bmp_img.radar_r_g_h, &dma_phy.dma_radar_r_g_src, GFP_KERNEL);
+	if (bmp_img.radar_r_g_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_r_g_w,bmp_img.radar_r_g_h);
+		return -1;
+	}
+	bmp_img.radar_r_o_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_r_o_w*bmp_img.radar_r_o_h, &dma_phy.dma_radar_r_o_src, GFP_KERNEL);
+	if (bmp_img.radar_r_o_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_r_o_w,bmp_img.radar_r_o_h);
+		return -1;
+	}
+	bmp_img.radar_r_r_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_r_r_w*bmp_img.radar_r_r_h, &dma_phy.dma_radar_r_r_src, GFP_KERNEL);
+	if (bmp_img.radar_r_r_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_r_r_w,bmp_img.radar_r_r_h);
+		return -1;
+	}
+
+	bmp_img.radar_m_g_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_m_g_w*bmp_img.radar_m_g_h, &dma_phy.dma_radar_m_g_src, GFP_KERNEL);
+	if (bmp_img.radar_m_g_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_m_g_w,bmp_img.radar_m_g_h);
+		return -1;
+	}
+	bmp_img.radar_m_o_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_m_o_w*bmp_img.radar_m_o_h, &dma_phy.dma_radar_m_o_src, GFP_KERNEL);
+	if (bmp_img.radar_m_o_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_m_o_w,bmp_img.radar_m_o_h);
+		return -1;
+	}
+	bmp_img.radar_m_r_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_m_r_w*bmp_img.radar_m_r_h, &dma_phy.dma_radar_m_r_src, GFP_KERNEL);
+	if (bmp_img.radar_m_r_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_m_r_w,bmp_img.radar_m_r_h);
+		return -1;
+	}
+
+	bmp_img.radar_l_g_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_l_g_w*bmp_img.radar_l_g_h, &dma_phy.dma_radar_l_g_src, GFP_KERNEL);
+	if (bmp_img.radar_l_g_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_l_g_w,bmp_img.radar_l_g_h);
+		return -1;
+	}
+	bmp_img.radar_l_o_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_l_o_w*bmp_img.radar_l_o_h, &dma_phy.dma_radar_l_o_src, GFP_KERNEL);
+	if (bmp_img.radar_l_o_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_l_o_w,bmp_img.radar_l_o_h);
+		return -1;
+	}
+	bmp_img.radar_l_r_src = (char *)dma_alloc_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_l_r_w*bmp_img.radar_l_r_h, &dma_phy.dma_radar_l_r_src, GFP_KERNEL);
+	if (bmp_img.radar_l_r_src == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.rgb_bit,bmp_img.radar_l_r_w,bmp_img.radar_l_r_h);
+		return -1;
+	}
+
+	bmp_img.radar_r_g_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_r_g_w*bmp_img.radar_r_g_h, &dma_phy.dma_radar_r_g_dest, GFP_KERNEL);
+	if (bmp_img.radar_r_g_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_r_g_w,bmp_img.radar_r_g_h);
+		return -1;
+	}
+	bmp_img.radar_r_o_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_r_o_w*bmp_img.radar_r_o_h, &dma_phy.dma_radar_r_o_dest, GFP_KERNEL);
+	if (bmp_img.radar_r_o_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_r_o_w,bmp_img.radar_r_o_h);
+		return -1;
+	}
+	bmp_img.radar_r_r_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_r_r_w*bmp_img.radar_r_r_h, &dma_phy.dma_radar_r_r_dest, GFP_KERNEL);
+	if (bmp_img.radar_r_r_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_r_r_w,bmp_img.radar_r_r_h);
+		return -1;
+	}
+	
+	bmp_img.radar_m_g_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_m_g_w*bmp_img.radar_m_g_h, &dma_phy.dma_radar_m_g_dest, GFP_KERNEL);
+	if (bmp_img.radar_m_g_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_m_g_w,bmp_img.radar_m_g_h);
+		return -1;
+	}
+	bmp_img.radar_m_o_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_m_o_w*bmp_img.radar_m_o_h, &dma_phy.dma_radar_m_o_dest, GFP_KERNEL);
+	if (bmp_img.radar_m_o_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_m_o_w,bmp_img.radar_m_o_h);
+		return -1;
+	}
+	bmp_img.radar_m_r_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_m_r_w*bmp_img.radar_m_r_h, &dma_phy.dma_radar_m_r_dest, GFP_KERNEL);
+	if (bmp_img.radar_m_r_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_m_r_w,bmp_img.radar_m_r_h);
+		return -1;
+	}
+
+	bmp_img.radar_l_g_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_l_g_w*bmp_img.radar_l_g_h, &dma_phy.dma_radar_l_g_dest, GFP_KERNEL);
+	if (bmp_img.radar_l_g_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_l_g_w,bmp_img.radar_l_g_h);
+		return -1;
+	}
+	bmp_img.radar_l_o_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_l_o_w*bmp_img.radar_l_o_h, &dma_phy.dma_radar_l_o_dest, GFP_KERNEL);
+	if (bmp_img.radar_l_o_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_l_o_w,bmp_img.radar_l_o_h);
+		return -1;
+	}
+	bmp_img.radar_l_r_dest = (char *)dma_alloc_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_l_r_w*bmp_img.radar_l_r_h, &dma_phy.dma_radar_l_r_dest, GFP_KERNEL);
+	if (bmp_img.radar_l_r_dest == NULL) {
+		printk("ubmp kmalloc %d*%d*%d Bytes memory failed!\n",bmp_img.argb_bit,bmp_img.radar_l_r_w,bmp_img.radar_l_r_h);
+		return -1;
+	}
+
+	printk("%s Exit\r\n",__FUNCTION__);
+	return 0;
+}
+
+#endif
 
 
-
+#if 0
 int free_memery(void)
 {
 	printk("%s Enter\r\n",__FUNCTION__);
@@ -254,7 +392,61 @@ int free_memery(void)
 	printk("%s Exit\r\n",__FUNCTION__);
 	return 0;
 }
+#else
+int free_memery(void)
+{
+	printk("%s Enter\r\n",__FUNCTION__);
 
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.line_w*bmp_img.line_h, bmp_img.line_src, &dma_phy.dma_line_src);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.line_w*bmp_img.line_h, bmp_img.line_dest, &dma_phy.dma_line_dest);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.carmodel_w*bmp_img.carmodel_h, bmp_img.carmodel_src, &dma_phy.dma_carmodel_src);
+	
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.carmodel_w*bmp_img.carmodel_h, bmp_img.carmodel_dest, &dma_phy.dma_carmodel_dest);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_r_g_w*bmp_img.radar_r_g_h, bmp_img.radar_r_g_src, &dma_phy.dma_radar_r_g_src);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_r_o_w*bmp_img.radar_r_o_h, bmp_img.radar_r_o_src, &dma_phy.dma_radar_r_o_src);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_r_r_w*bmp_img.radar_r_r_h, bmp_img.radar_r_r_src,&dma_phy.dma_radar_r_r_src);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_m_g_w*bmp_img.radar_m_g_h, bmp_img.radar_m_g_src,&dma_phy.dma_radar_m_g_src);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_m_o_w*bmp_img.radar_m_o_h, bmp_img.radar_m_o_src, &dma_phy.dma_radar_m_o_src);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_m_r_w*bmp_img.radar_m_r_h, bmp_img.radar_m_r_src, &dma_phy.dma_radar_m_r_src);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_l_g_w*bmp_img.radar_l_g_h, bmp_img.radar_l_g_src, &dma_phy.dma_radar_l_g_src);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_l_o_w*bmp_img.radar_l_o_h, bmp_img.radar_l_o_src, &dma_phy.dma_radar_l_o_src);
+
+	dma_free_coherent(NULL, bmp_img.rgb_bit*bmp_img.radar_l_r_w*bmp_img.radar_l_r_h, bmp_img.radar_l_r_src, &dma_phy.dma_radar_l_r_src);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_r_g_w*bmp_img.radar_r_g_h, bmp_img.radar_r_g_dest, &dma_phy.dma_radar_r_g_dest);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_r_o_w*bmp_img.radar_r_o_h, bmp_img.radar_r_o_dest, &dma_phy.dma_radar_r_o_dest);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_r_r_w*bmp_img.radar_r_r_h, bmp_img.radar_r_r_dest, &dma_phy.dma_radar_r_r_dest);
+	
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_m_g_w*bmp_img.radar_m_g_h, bmp_img.radar_m_g_dest, &dma_phy.dma_radar_m_g_dest);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_m_o_w*bmp_img.radar_m_o_h, bmp_img.radar_m_o_dest, &dma_phy.dma_radar_m_o_dest);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_m_r_w*bmp_img.radar_m_r_h, bmp_img.radar_m_r_dest, &dma_phy.dma_radar_m_r_dest);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_l_g_w*bmp_img.radar_l_g_h, bmp_img.radar_l_g_dest, &dma_phy.dma_radar_l_g_dest);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_l_o_w*bmp_img.radar_l_o_h, bmp_img.radar_l_o_dest, &dma_phy.dma_radar_l_o_dest);
+
+	dma_free_coherent(NULL, bmp_img.argb_bit*bmp_img.radar_l_r_w*bmp_img.radar_l_r_h, bmp_img.radar_l_r_dest, &dma_phy.dma_radar_l_r_dest);
+
+	//dma_release_channel(chan);
+	printk("%s Exit\r\n",__FUNCTION__);
+	return 0;
+}
+
+#endif
 
 int analysis_auxiliary_line_pictures(const char *path, void *base)
 {
