@@ -1,0 +1,2 @@
+MODESET_DOUBLE_FILES := \
+	modeset-double-buffer.c

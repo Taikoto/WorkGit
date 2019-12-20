@@ -1,0 +1,2 @@
+MODESET_SINGLE_FILES := \
+	modeset-page-flip.c

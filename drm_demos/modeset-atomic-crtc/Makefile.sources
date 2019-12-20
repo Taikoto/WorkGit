@@ -1,0 +1,2 @@
+MODESET_CRTC_FILES := \
+	modeset-atomic-crtc.c

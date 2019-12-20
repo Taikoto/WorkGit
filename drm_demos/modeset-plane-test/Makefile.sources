@@ -1,0 +1,2 @@
+MODESET_PLANE_FILES := \
+	modeset-plane-test.c
