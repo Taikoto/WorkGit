@@ -1,0 +1,3 @@
+It's a typical little project, include interrupt, timer, tasklet, workqueue, mmap, poll, fasync, threadedirq ...
+
+note: pay attention to the historical submission
