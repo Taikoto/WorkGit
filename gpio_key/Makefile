@@ -1,0 +1,1 @@
+obj-y += gpio_key_drv.o

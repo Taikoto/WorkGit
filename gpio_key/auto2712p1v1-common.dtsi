@@ -1263,6 +1263,15 @@
 			>;
 };
 
+&gpio_keys {
+        compatible = "mt2712,gpio_key";
+	gpios = <&pio 150 1
+                 &pio 149 0>;
+		
+        pinctrl-names = "default";
+        pinctrl-0 = <&key1 &key2>;
+};
+
 &lvds0 {
 	status = "disabled";
 	mediatek,dual-channel;
@@ -2496,6 +2505,20 @@
                         bias-pull-up = <00>;
 		};
 	};
+
+        key1: key1 {
+                pins_cmd_dat {
+                        pinmux = <MT2712_PIN_150_GPIO150__FUNC_GPIO150>;
+                        bias-disable;
+                };
+        };
+
+        key2: key2 {
+                pins_cmd_dat {
+                        pinmux = <MT2712_PIN_149_GPIO149__FUNC_GPIO149>;
+                        bias-disable;
+                };
+        };
 };
 
 &pwm0 {

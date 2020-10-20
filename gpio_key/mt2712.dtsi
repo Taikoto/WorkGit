@@ -324,6 +324,10 @@
 		clock-names = "kpd-clk";
 	};
 
+        gpio_keys: gpio_keys {
+                compatible = "mt2712,gpio_key";
+        };
+
 	emi: emi@10203000 {
 		compatible = "mediatek,mt2712-emi";
 		reg = <0 0x10203000 0 0x1000>;
