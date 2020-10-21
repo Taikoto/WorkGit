@@ -31,6 +31,7 @@ struct gpio_key{
 	int flag;
 	int irq;
 	struct timer_list key_timer;
+	struct tasklet_struct tasklet;
 } ;
 
 static struct gpio_key *gpio_keys;
@@ -97,6 +98,16 @@ static void key_timer_expire(unsigned long data)
 	kill_fasync(&button_fasync, SIGIO, POLL_IN);
 }
 
+static void key_tasklet_func(unsigned long data)
+{
+	/* data ==> gpio */
+	struct gpio_key *gpio_key = (struct gpio_key *)data;
+	int val;
+
+	val = gpiod_get_value(gpio_key->gpiod);
+
+	printk("key_tasklet_func key %d %d\n", gpio_key->gpio, val);
+}
 
 /* 实现对应的open/read/write等函数，填入file_operations结构体                   */
 static ssize_t gpio_key_drv_read (struct file *file, char __user *buf, size_t size, loff_t *offset)
@@ -141,8 +152,9 @@ static struct file_operations gpio_key_drv = {
 static irqreturn_t gpio_key_isr(int irq, void *dev_id)
 {
 	struct gpio_key *gpio_key = dev_id;
-	printk("gpio_key_isr key %d irq happened\n", gpio_key->gpio);
-	mod_timer(&gpio_key->key_timer, jiffies + HZ/5);
+	//printk("gpio_key_isr key %d irq happened\n", gpio_key->gpio);
+	tasklet_schedule(&gpio_key->tasklet);
+	mod_timer(&gpio_key->key_timer, jiffies + HZ/50);
 	return IRQ_HANDLED;
 }
 
@@ -182,6 +194,8 @@ static int gpio_key_probe(struct platform_device *pdev)
 		setup_timer(&gpio_keys[i].key_timer, key_timer_expire, (unsigned long)(&gpio_keys[i]));
 		gpio_keys[i].key_timer.expires = ~0;
 		add_timer(&gpio_keys[i].key_timer);
+
+		tasklet_init(&gpio_keys[i].tasklet, key_tasklet_func, (unsigned long)(&gpio_keys[i]));
 	}
 
 	for (i = 0; i < count; i++)
@@ -221,6 +235,7 @@ static int gpio_key_remove(struct platform_device *pdev)
 	{
 		free_irq(gpio_keys[i].irq, &gpio_keys[i]);
 		del_timer(&gpio_keys[i].key_timer);
+		tasklet_kill(&gpio_keys[i].tasklet);
 	}
 	kfree(gpio_keys);
     return 0;
