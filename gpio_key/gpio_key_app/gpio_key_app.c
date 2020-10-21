@@ -8,12 +8,6 @@
 #include <signal.h>
 
 static int fd;
-static void sig_func(int sig)
-{
-	int val;
-	read(fd, &val, 4);
-	printf("get button : 0x%x\n", val);
-}
 
 /*
  * ./gpio_key_app /dev/gpio_key
@@ -26,6 +20,8 @@ int main(int argc, char **argv)
 	int timeout_ms = 5000;
 	int ret;
 	int flags;
+
+	int i;
 	
 	/* 1. 判断参数 */
 	if (argc != 2) 
@@ -34,24 +30,31 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	signal(SIGIO, sig_func);
-
 	/* 2. 打开文件 */
-	fd = open(argv[1], O_RDWR);
+	fd = open(argv[1], O_RDWR | O_NONBLOCK);
 	if (fd == -1)
 	{
 		printf("can not open file %s\n", argv[1]);
 		return -1;
 	}
 
-	fcntl(fd, F_SETOWN, getpid());
+	for (i = 0; i < 10; i++) 
+	{
+		if (read(fd, &val, 4) == 4)
+			printf("get key: 0x%x\n", val);
+		else
+			printf("get key: -1\n");
+	}
+
 	flags = fcntl(fd, F_GETFL);
-	fcntl(fd, F_SETFL, flags | FASYNC);
+	fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
 
 	while (1)
 	{
-		printf("gpio key app\n");
-		sleep(2);
+		if (read(fd, &val, 4) == 4)
+			printf("get key: 0x%x\n", val);
+		else
+			printf("while get key: -1\n");
 	}
 	
 	close(fd);

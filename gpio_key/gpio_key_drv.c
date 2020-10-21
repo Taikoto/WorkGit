@@ -85,6 +85,9 @@ static ssize_t gpio_key_drv_read (struct file *file, char __user *buf, size_t si
 	//printk("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
 	int err;
 	int key;
+
+	if (is_key_buf_empty() && (file->f_flags & O_NONBLOCK))
+		return -EAGAIN;
 	
 	wait_event_interruptible(gpio_key_wait, !is_key_buf_empty());
 	key = get_key();
