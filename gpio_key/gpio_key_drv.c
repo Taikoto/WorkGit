@@ -22,6 +22,7 @@
 #include <linux/irq.h>
 #include <linux/slab.h>
 #include <linux/fcntl.h>
+#include <linux/timer.h>
 
 
 struct gpio_key{
@@ -29,6 +30,7 @@ struct gpio_key{
 	struct gpio_desc *gpiod;
 	int flag;
 	int irq;
+	struct timer_list key_timer;
 } ;
 
 static struct gpio_key *gpio_keys;
@@ -79,6 +81,23 @@ static int get_key(void)
 
 static DECLARE_WAIT_QUEUE_HEAD(gpio_key_wait);
 
+static void key_timer_expire(unsigned long data)
+{
+	/* data ==> gpio */
+	struct gpio_key *gpio_key = (struct gpio_key *)data;
+	int val;
+	int key;
+
+	val = gpiod_get_value(gpio_key->gpiod);
+
+	printk("key_timer_expire key %d %d\n", gpio_key->gpio, val);
+	key = (gpio_key->gpio << 8) | val;
+	put_key(key);
+	wake_up_interruptible(&gpio_key_wait);
+	kill_fasync(&button_fasync, SIGIO, POLL_IN);
+}
+
+
 /* 实现对应的open/read/write等函数，填入file_operations结构体                   */
 static ssize_t gpio_key_drv_read (struct file *file, char __user *buf, size_t size, loff_t *offset)
 {
@@ -122,17 +141,8 @@ static struct file_operations gpio_key_drv = {
 static irqreturn_t gpio_key_isr(int irq, void *dev_id)
 {
 	struct gpio_key *gpio_key = dev_id;
-	int val;
-	int key;
-	
-	val = gpiod_get_value(gpio_key->gpiod);
-	
-	printk("key %d %d\n", gpio_key->gpio, val);
-	key = (gpio_key->gpio << 8) | val;
-	put_key(key);
-	wake_up_interruptible(&gpio_key_wait);
-	kill_fasync(&button_fasync, SIGIO, POLL_IN);
-	
+	printk("gpio_key_isr key %d irq happened\n", gpio_key->gpio);
+	mod_timer(&gpio_key->key_timer, jiffies + HZ/5);
 	return IRQ_HANDLED;
 }
 
@@ -169,6 +179,9 @@ static int gpio_key_probe(struct platform_device *pdev)
 		gpio_keys[i].gpiod = gpio_to_desc(gpio_keys[i].gpio);
 		gpio_keys[i].flag = flag & OF_GPIO_ACTIVE_LOW;
 		gpio_keys[i].irq  = gpio_to_irq(gpio_keys[i].gpio);
+		setup_timer(&gpio_keys[i].key_timer, key_timer_expire, (unsigned long)(&gpio_keys[i]));
+		gpio_keys[i].key_timer.expires = ~0;
+		add_timer(&gpio_keys[i].key_timer);
 	}
 
 	for (i = 0; i < count; i++)
@@ -207,6 +220,7 @@ static int gpio_key_remove(struct platform_device *pdev)
 	for (i = 0; i < count; i++)
 	{
 		free_irq(gpio_keys[i].irq, &gpio_keys[i]);
+		del_timer(&gpio_keys[i].key_timer);
 	}
 	kfree(gpio_keys);
     return 0;
