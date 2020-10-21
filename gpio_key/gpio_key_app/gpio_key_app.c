@@ -5,6 +5,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <poll.h>
+#include <signal.h>
+
+static int fd;
+static void sig_func(int sig)
+{
+	int val;
+	read(fd, &val, 4);
+	printf("get button : 0x%x\n", val);
+}
 
 /*
  * ./gpio_key_app /dev/gpio_key
@@ -12,11 +21,11 @@
  */
 int main(int argc, char **argv)
 {
-	int fd;
 	int val;
 	struct pollfd fds[1];
 	int timeout_ms = 5000;
 	int ret;
+	int flags;
 	
 	/* 1. 判断参数 */
 	if (argc != 2) 
@@ -24,6 +33,8 @@ int main(int argc, char **argv)
 		printf("Usage: %s <dev>\n", argv[0]);
 		return -1;
 	}
+
+	signal(SIGIO, sig_func);
 
 	/* 2. 打开文件 */
 	fd = open(argv[1], O_RDWR);
@@ -33,22 +44,14 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	fds[0].fd = fd;
-	fds[0].events = POLLIN;
-	
+	fcntl(fd, F_SETOWN, getpid());
+	flags = fcntl(fd, F_GETFL);
+	fcntl(fd, F_SETFL, flags | FASYNC);
+
 	while (1)
 	{
-		/* 3. 读文件 */
-		ret = poll(fds, 1, timeout_ms);
-		if ((ret == 1) && (fds[0].revents & POLLIN))
-		{
-			read(fd, &val, 4);
-			printf("get gpio_key : 0x%x\n", val);
-		}
-		else
-		{
-			printf("timeout\n");
-		}
+		printf("gpio key app\n");
+		sleep(2);
 	}
 	
 	close(fd);

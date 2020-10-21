@@ -21,6 +21,7 @@
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/slab.h>
+#include <linux/fcntl.h>
 
 
 struct gpio_key{
@@ -40,6 +41,8 @@ static struct class *gpio_key_class;
 #define BUF_LEN 128
 static int g_keys[BUF_LEN];
 static int r, w;
+
+struct fasync_struct *button_fasync;
 
 #define NEXT_POS(x) ((x+1) % BUF_LEN)
 
@@ -97,11 +100,20 @@ static unsigned int gpio_key_drv_poll(struct file *fp, poll_table * wait)
 	return is_key_buf_empty() ? 0 : POLLIN | POLLRDNORM;
 }
 
+static int gpio_key_drv_fasync(int fd, struct file *file, int on)
+{
+	if (fasync_helper(fd, file, on, &button_fasync) >= 0)
+		return 0;
+	else
+		return -EIO;
+}
+
 /* 定义自己的file_operations结构体                                              */
 static struct file_operations gpio_key_drv = {
 	.owner	 = THIS_MODULE,
 	.read    = gpio_key_drv_read,
 	.poll    = gpio_key_drv_poll,
+	.fasync  = gpio_key_drv_fasync,
 };
 
 static irqreturn_t gpio_key_isr(int irq, void *dev_id)
@@ -116,6 +128,7 @@ static irqreturn_t gpio_key_isr(int irq, void *dev_id)
 	key = (gpio_key->gpio << 8) | val;
 	put_key(key);
 	wake_up_interruptible(&gpio_key_wait);
+	kill_fasync(&button_fasync, SIGIO, POLL_IN);
 	
 	return IRQ_HANDLED;
 }
