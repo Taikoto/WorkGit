@@ -171,6 +171,19 @@ static irqreturn_t gpio_key_isr(int irq, void *dev_id)
 	mod_timer(&gpio_key->key_timer, jiffies + HZ/50);
 	schedule_work(&gpio_key->work);
 	
+	return IRQ_WAKE_THREAD;
+}
+
+static irqreturn_t gpio_key_thread_func(int irq, void *data)
+{
+	struct gpio_key *gpio_key = data;
+	int val;
+
+	val = gpiod_get_value(gpio_key->gpiod);
+
+	printk("gpio_key_thread_func: the process is %s pid %d\n",current->comm, current->pid);
+	printk("gpio_key_thread_func key %d %d\n", gpio_key->gpio, val);
+
 	return IRQ_HANDLED;
 }
 
@@ -217,7 +230,8 @@ static int gpio_key_probe(struct platform_device *pdev)
 
 	for (i = 0; i < count; i++)
 	{
-		err = request_irq(gpio_keys[i].irq, gpio_key_isr, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "gpio_key", &gpio_keys[i]);
+		//err = request_irq(gpio_keys[i].irq, gpio_key_isr, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "gpio_key", &gpio_keys[i]);
+		err = request_threaded_irq(gpio_keys[i].irq, gpio_key_isr, gpio_key_thread_func, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "gpio_key", &gpio_keys[i]);
 	}
 
 	/* 注册file_operations 	*/
@@ -253,7 +267,7 @@ static int gpio_key_remove(struct platform_device *pdev)
 		free_irq(gpio_keys[i].irq, &gpio_keys[i]);
 		del_timer(&gpio_keys[i].key_timer);
 		tasklet_kill(&gpio_keys[i].tasklet);
-		flush_work(&gpio_key[i]->work);
+		flush_work(&gpio_keys[i].work);
 	}
 	kfree(gpio_keys);
     return 0;
