@@ -35,7 +35,43 @@ static struct gpio_key *gpio_keys;
 static int major = 0;
 static struct class *gpio_key_class;
 
-static int g_key = 0;
+/* 环形缓冲区 */
+#define BUF_LEN 128
+static int g_keys[BUF_LEN];
+static int r, w;
+
+#define NEXT_POS(x) ((x+1) % BUF_LEN)
+
+static int is_key_buf_empty(void)
+{
+	return (r == w);
+}
+
+static int is_key_buf_full(void)
+{
+	return (r == NEXT_POS(w));
+}
+
+static void put_key(int key)
+{
+	if (!is_key_buf_full())
+	{
+		g_keys[w] = key;
+		w = NEXT_POS(w);
+	}
+}
+
+static int get_key(void)
+{
+	int key = 0;
+	if (!is_key_buf_empty())
+	{
+		key = g_keys[r];
+		r = NEXT_POS(r);
+	}
+	return key;
+}
+
 
 static DECLARE_WAIT_QUEUE_HEAD(gpio_key_wait);
 
@@ -44,10 +80,11 @@ static ssize_t gpio_key_drv_read (struct file *file, char __user *buf, size_t si
 {
 	//printk("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
 	int err;
+	int key;
 	
-	wait_event_interruptible(gpio_key_wait, g_key);
-	err = copy_to_user(buf, &g_key, 4);
-	g_key = 0;
+	wait_event_interruptible(gpio_key_wait, !is_key_buf_empty());
+	key = get_key();
+	err = copy_to_user(buf, &key, 4);
 	
 	return 4;
 }
@@ -62,10 +99,13 @@ static irqreturn_t gpio_key_isr(int irq, void *dev_id)
 {
 	struct gpio_key *gpio_key = dev_id;
 	int val;
+	int key;
+	
 	val = gpiod_get_value(gpio_key->gpiod);
 	
 	printk("key %d %d\n", gpio_key->gpio, val);
-	g_key = (gpio_key->gpio << 8) | val;
+	key = (gpio_key->gpio << 8) | val;
+	put_key(key);
 	wake_up_interruptible(&gpio_key_wait);
 	
 	return IRQ_HANDLED;
