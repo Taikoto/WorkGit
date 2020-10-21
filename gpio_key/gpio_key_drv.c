@@ -1,4 +1,5 @@
 #include <linux/module.h>
+#include <linux/poll.h>
 #include <linux/fs.h>
 #include <linux/errno.h>
 #include <linux/miscdevice.h>
@@ -89,10 +90,18 @@ static ssize_t gpio_key_drv_read (struct file *file, char __user *buf, size_t si
 	return 4;
 }
 
+static unsigned int gpio_key_drv_poll(struct file *fp, poll_table * wait)
+{
+	printk("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
+	poll_wait(fp, &gpio_key_wait, wait);
+	return is_key_buf_empty() ? 0 : POLLIN | POLLRDNORM;
+}
+
 /* 定义自己的file_operations结构体                                              */
 static struct file_operations gpio_key_drv = {
 	.owner	 = THIS_MODULE,
 	.read    = gpio_key_drv_read,
+	.poll    = gpio_key_drv_poll,
 };
 
 static irqreturn_t gpio_key_isr(int irq, void *dev_id)
