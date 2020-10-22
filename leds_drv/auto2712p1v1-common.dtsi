@@ -15,6 +15,9 @@
 #include <dt-bindings/gpio/gpio.h>
 #include "mt2712.dtsi"
 
+
+#define GROUP_PIN(g,p) ((g<<16) | (p))
+
 / {
 	model = "MediaTek MT2712p1v1 board";
 	compatible = "mediatek,mt2712p1v1", "mediatek,mt2712";
@@ -1270,6 +1273,16 @@
 		
         pinctrl-names = "default";
         pinctrl-0 = <&key1 &key2>;
+};
+
+&led0 {
+        compatible = "mt2712,leddrv";
+        pin = <GROUP_PIN(3, 1)>;
+};
+
+&led1 {
+        compatible = "mt2712,leddrv";
+        pin = <GROUP_PIN(5, 8)>;
 };
 
 &lvds0 {
