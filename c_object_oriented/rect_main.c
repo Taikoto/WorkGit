@@ -1,5 +1,6 @@
-#include "rect.h"  
-#include <stdio.h> 
+#include "rect.h"
+#include "shape.h"
+#include <stdio.h>
 
 int rect_main(void) 
 {
