@@ -1,0 +1,5 @@
+*.json
+*.o
+v4l2
+*.sh
+obj
