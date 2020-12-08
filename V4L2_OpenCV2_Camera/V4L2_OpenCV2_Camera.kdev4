@@ -1,0 +1,3 @@
+[Project]
+Manager=KDevCMakeManager
+Name=V4L2_OpenCV2_Camera
