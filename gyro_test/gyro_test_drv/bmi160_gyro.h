@@ -33,6 +33,8 @@
 #define BMG_AXIS_Z				2
 #define BMG_AXES_NUM				3
 #define BMG_DATA_LEN				6
+#define BMG_TEMP_NUM				1
+#define BMG_TEMP_DATA_LEN			2
 
 #define C_MAX_FIR_LENGTH			(32)
 #define MAX_SENSOR_NAME				(32)
@@ -136,4 +138,5 @@
 #define BMI160_USER_DATA_8_GYR_X_LSB__MSK          0xFF
 #define BMI160_USER_DATA_8_GYR_X_LSB__REG          BMI160_USER_DATA_8_ADDR
 
+#define BMI160_SENSOR_TEMPERATURE_REG                  0x20
 #endif/* BMI160_GYRO_H */

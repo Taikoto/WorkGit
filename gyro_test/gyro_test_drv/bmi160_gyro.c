@@ -444,6 +444,44 @@ static void bmg_power(struct gyro_hw *hw, unsigned int on)
 #endif
 }
 
+static int bmg_get_temperature(struct i2c_client *client, s16 data[BMG_TEMP_NUM])
+{
+	struct bmg_i2c_data *priv = obj_i2c_data;
+	int err = 0;
+
+	if (priv->power_mode == BMG_SUSPEND_MODE) {
+		err = bmg_set_powermode(client,
+			(enum BMG_POWERMODE_ENUM)BMG_NORMAL_MODE);
+		if (err < 0) {
+			GYRO_ERR("set power mode failed, err = %d\n", err);
+			return err;
+		}
+	}
+	
+	memset(data, 0, sizeof(s16)*BMG_TEMP_NUM);
+
+	if (NULL == client) {
+		err = -EINVAL;
+		return err;
+	}
+
+	if (priv->sensor_type == BMI160_GYRO_TYPE) {
+		u8 buf_tmp[BMG_TEMP_DATA_LEN] = {0};
+		err = bmg_i2c_read_block(client, BMI160_SENSOR_TEMPERATURE_REG, buf_tmp, 2);
+		if (err) {
+			GYRO_ERR("[%s]read temperature data failed, err = %d\n",
+			priv->sensor_name, err);
+			return err;
+		}
+		/* Temperature Data*/
+		data[0] = (s16)
+			((((s32)((s8)buf_tmp[1]))
+			  << BMI160_SHIFT_8_POSITION) | (buf_tmp[0]));
+	}
+		
+	return err;
+}
+
 static int bmg_read_raw_data(struct i2c_client *client, s16 data[BMG_AXES_NUM])
 {
 	struct bmg_i2c_data *priv = obj_i2c_data;
@@ -860,9 +898,9 @@ static int bmg_set_range(struct i2c_client *client, enum BMG_RANGE_ENUM range)
 			actual_range = BMI160_RANGE_1000;
 		else if (range == BMG_RANGE_500)
 			actual_range = BMI160_RANGE_500;
-		else if (range == BMG_RANGE_500)
+		else if (range == BMG_RANGE_250)
 			actual_range = BMI160_RANGE_250;
-		else if (range == BMG_RANGE_500)
+		else if (range == BMG_RANGE_125)
 			actual_range = BMI160_RANGE_125;
 		else {
 			err = -EINVAL;
@@ -896,7 +934,7 @@ static int bmg_set_range(struct i2c_client *client, enum BMG_RANGE_ENUM range)
 				obj->sensitivity = 66;
 			break;
 			case BMG_RANGE_250:
-				obj->sensitivity = 131;
+				obj->sensitivity = 133;
 			break;
 			case BMG_RANGE_125:
 				obj->sensitivity = 262;
@@ -1011,7 +1049,7 @@ static int bmg_init_client(struct i2c_client *client, int reset_cali)
 		return err;
 	}
 
-	err = bmg_set_range(client, (enum BMG_RANGE_ENUM)BMG_RANGE_2000);
+	err = bmg_set_range(client, (enum BMG_RANGE_ENUM)BMG_RANGE_250);
 	if (err < 0) {
 		GYRO_ERR("set range failed, err = %d\n", err);
 		return err;
@@ -1051,6 +1089,7 @@ static int bmg_read_sensor_data(struct i2c_client *client,
 	s16 databuf[BMG_AXES_NUM];
 	int gyro[BMG_AXES_NUM];
 	int err = 0;
+	static int count = 0;
 
 	memset(databuf, 0, sizeof(s16)*BMG_AXES_NUM);
 	memset(gyro, 0, sizeof(int)*BMG_AXES_NUM);
@@ -1082,10 +1121,19 @@ static int bmg_read_sensor_data(struct i2c_client *client,
 			obj->cvt.sign[BMG_AXIS_Z]*databuf[BMG_AXIS_Z];
 
 		/* convert: LSB -> degree/second(o/s) */
-		gyro[BMG_AXIS_X] = gyro[BMG_AXIS_X] / obj->sensitivity;
-		gyro[BMG_AXIS_Y] = gyro[BMG_AXIS_Y] / obj->sensitivity;
-		gyro[BMG_AXIS_Z] = gyro[BMG_AXIS_Z] / obj->sensitivity;
+		//gyro[BMG_AXIS_X] = gyro[BMG_AXIS_X] / obj->sensitivity;
+		//gyro[BMG_AXIS_Y] = gyro[BMG_AXIS_Y] / obj->sensitivity;
+		//gyro[BMG_AXIS_Z] = gyro[BMG_AXIS_Z] / obj->sensitivity;
 
+		if(1000 == count) {// 10s
+                        printk(KERN_EMERG"GYRO bmi160:func %s,the gyro databuf is (0x%x,0x%x,0x%x).\n",
+                                __func__,obj->cali_sw[BMG_AXIS_X], obj->cali_sw[BMG_AXIS_Y], obj->cali_sw[BMG_AXIS_Z]);
+			printk(KERN_EMERG"GYRO bmi160:func %s,the gyro data is (0x%x,0x%x,0x%x), sensitivity = %d.\n",
+				__func__,gyro[BMG_AXIS_X], gyro[BMG_AXIS_Y], gyro[BMG_AXIS_Z],obj->sensitivity);
+			count = 0;
+		}
+
+		count++;
 		sprintf(buf, "%04x %04x %04x",
 			gyro[BMG_AXIS_X], gyro[BMG_AXIS_Y], gyro[BMG_AXIS_Z]);
 		if (atomic_read(&obj->trace) & GYRO_TRC_IOCTL)
@@ -1122,6 +1170,28 @@ static ssize_t show_sensordata_value(struct device_driver *ddri, char *buf)
 
 	bmg_read_sensor_data(obj->client, strbuf, BMG_BUFSIZE);
 	return snprintf(buf, PAGE_SIZE, "%s\n", strbuf);
+}
+
+
+static ssize_t show_temperature_value(struct device_driver *ddri, char *buf)
+{
+	struct bmg_i2c_data *obj = obj_i2c_data;
+	s16 dataraw[BMG_TEMP_NUM];
+	static int count = 0;
+
+	if (NULL == obj) {
+		GYRO_ERR("bmg i2c data pointer is null\n");
+		return 0;
+	}
+
+	bmg_get_temperature(obj->client, dataraw);
+	if(3000 == count) {
+        printk(KERN_EMERG"GYRO bmi160 temperature is 0x%x\n",dataraw[0]);
+		count = 0;
+	}
+	count++;
+
+	return snprintf(buf, PAGE_SIZE, "0x%x\n",dataraw[0]);
 }
 
 /*
@@ -1495,6 +1565,7 @@ static ssize_t show_selftest_value(struct device_driver *ddri, char *buf)
 static DRIVER_ATTR(chipinfo, S_IWUSR | S_IRUGO, show_chipinfo_value, NULL);
 static DRIVER_ATTR(sensordata, S_IWUSR | S_IRUGO, show_sensordata_value, NULL);
 static DRIVER_ATTR(rawdata, S_IWUSR | S_IRUGO, show_rawdata_value, NULL);
+static DRIVER_ATTR(temperature, S_IWUSR | S_IRUGO, show_temperature_value, NULL);
 static DRIVER_ATTR(cali, S_IWUSR | S_IRUGO, show_cali_value, store_cali_value);
 static DRIVER_ATTR(firlen, S_IWUSR | S_IRUGO,
 		show_firlen_value, store_firlen_value);
@@ -1516,6 +1587,8 @@ static struct driver_attribute *bmg_attr_list[] = {
 	&driver_attr_sensordata,
 	/* dump raw data */
 	&driver_attr_rawdata,
+	/* show temperature */
+	&driver_attr_temperature,
 	/* show calibration data */
 	&driver_attr_cali,
 	/* filter length: 0: disable, others: enable */
@@ -1670,6 +1743,7 @@ static long bmg_unlocked_ioctl(struct file *file, unsigned int cmd,
 	struct bmg_i2c_data *obj = (struct bmg_i2c_data *)file->private_data;
 	struct i2c_client *client = obj->client;
 	char strbuf[BMG_BUFSIZE] = "";
+	s16 dataraw[BMG_TEMP_NUM];
 	int raw_offset[BMG_BUFSIZE] = {0};
 	void __user *data;
 	SENSOR_DATA sensor_data;
@@ -1716,6 +1790,8 @@ static long bmg_unlocked_ioctl(struct file *file, unsigned int cmd,
 	break;
 	case GYROSCOPE_IOCTL_SET_CALI:
 	/* data unit is degree/second */
+	
+	printk(KERN_EMERG"GYRO bmi160 GYROSCOPE_IOCTL_SET_CALI\n");
 	data = (void __user *)arg;
 	if (data == NULL) {
 		err = -EINVAL;
@@ -1740,6 +1816,7 @@ static long bmg_unlocked_ioctl(struct file *file, unsigned int cmd,
 	err = bmg_reset_calibration(client);
 	break;
 	case GYROSCOPE_IOCTL_GET_CALI:
+	printk(KERN_EMERG"GYRO bmi160 GYROSCOPE_IOCTL_GET_CALI\n");
 	data = (void __user *)arg;
 	if (data == NULL) {
 		err = -EINVAL;
@@ -1769,6 +1846,20 @@ static long bmg_unlocked_ioctl(struct file *file, unsigned int cmd,
 	irq_config_open(threshold);
     break;
     #endif
+	case GYROSCOPE_IOCTL_READ_TEMPERATURE:
+	data = (void __user *) arg;
+	if (data == NULL) {
+		err = -EINVAL;
+		break;
+	}
+	
+    bmg_get_temperature(client, dataraw);
+	
+	if (copy_to_user(data, dataraw, sizeof(dataraw))) {
+		err = -EFAULT;
+		break;
+	}
+	break;
 	default:
 	GYRO_ERR("unknown IOCTL: 0x%08x\n", cmd);
 	err = -ENOIOCTLCMD;
@@ -1869,10 +1960,46 @@ static long bmg_compat_ioctl(struct file *file, unsigned int cmd, unsigned long 
 	return ret;
 }
 #endif
+
+static ssize_t bmg_temperature_read(struct file *file, char __user *buf, size_t size, loff_t *offset)
+{
+	struct bmg_i2c_data *obj = obj_i2c_data;
+	s16 dataraw[BMG_TEMP_NUM];
+	static int count = 0;
+
+	if (NULL == obj) {
+		GYRO_ERR("bmg i2c data pointer is null\n");
+		return 0;
+	}
+
+	bmg_get_temperature(obj->client, dataraw);
+	//if(3000 == count) 
+	{
+        printk(KERN_EMERG"GYRO bmi160 temperature is 0x%x\n",dataraw[0]);
+		count = 0;
+	}
+	count++;
+	if (copy_to_user(buf, dataraw, size))
+		return -EFAULT;
+
+	return size;
+}
+
+#if 0
+static unsigned int bmg_temperature_poll(struct file *fp, poll_table * wait)
+{
+	printk("%s %s line %d\n", __FILE__, __FUNCTION__, __LINE__);
+	poll_wait(fp, &gpio_key_wait, wait);
+	return is_key_buf_empty() ? 0 : POLLIN | POLLRDNORM;
+}
+#endif
+
 static const struct file_operations bmg_fops = {
 	//.owner = THIS_MODULE,
 	.open = bmg_open,
 	.release = bmg_release,
+	.read = bmg_temperature_read,
+	//.poll = bmg_temperature_poll,
 	.unlocked_ioctl = bmg_unlocked_ioctl,
 #ifdef CONFIG_COMPAT
 	.compat_ioctl = bmg_compat_ioctl,
