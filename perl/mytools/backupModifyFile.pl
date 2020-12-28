@@ -75,7 +75,7 @@ foreach $line (@all_lines)
 	next if ($line !~ m/modified:\s+(.+)\s*/ && $line !~ m/new file:\s+(.+)\s*/ );
 		# output_message($1);
 		$source_file = $source_dir.$1;
-# output_message($line);
+    output_message($line);
 	# output_report($source_file);
 	
 	
@@ -142,6 +142,8 @@ if ($l_files_cnt > 0)		# 如果非空
 			else
 			{
 				output_both("$l_filepath 复制文件错误! $!");
+				system `cp -rf $l_filepath/* $l_path`;
+				output_both("$l_filepath 已复制");
 			}
 		}
 		
