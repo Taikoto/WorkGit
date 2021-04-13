@@ -79,20 +79,20 @@ function initProject()
 }
 function fileCompareMerge()
 {
-    sh fileCompareMerge.sh
+    bash fileCompareMerge.sh
 }
 function fileAppendMerge()
 {
-    sh fileAppendMerge.sh
+    bash fileAppendMerge.sh
 }
 function fileReplace()
 {
-    sh fileReplace.sh
+    bash fileReplace.sh
 }
 function fileRestoryDefault()
 {
     echo "将差异化的参数和文件恢复为默认的"
-    sh fileRestoryDefault.sh
+    bash fileRestoryDefault.sh
 }
 function main()
 {

@@ -79,19 +79,19 @@ function initProject()
 }
 function fileCompareMerge()
 {
-    sh fileCompareMerge.sh
+    bash fileCompareMerge.sh
 }
 function fileAppendMerge()
 {
-    sh fileAppendMerge.sh
+    bash fileAppendMerge.sh
 }
 function fileReplace()
 {
-    sh fileReplace.sh
+    bash fileReplace.sh
 }
 function fileRestoryDefault()
 {
-    sh fileRestoryDefault.sh
+    bash fileRestoryDefault.sh
 }
 function main()
 {
