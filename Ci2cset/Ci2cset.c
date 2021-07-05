@@ -355,6 +355,7 @@ int main(int argc, char **argv)
 		printf("config file doesn't exit,will use default config = %d\n", ret);
 		configfile_status = 0;
 	} else {
+		configfile_status = 1;
 		//1. get_i2cconfig_struct 2. get_setting_table
 		table = (void *)malloc(table_len);
 		ctable = (void *)malloc(table_len);
