@@ -442,15 +442,15 @@ static setting_table *get_setting_table(setting_table *table)
 					preg = (char *)reg;
 					pval = (char *)val;
 					printf("my_stricmp = %d %d\n",my_stricmp(preg,pbuf),my_stricmp(pval,pbuf));
-					if (0/*my_stricmp(preg,pbuf) < 0*/) { //strimp
-						table[i].cmd = str_to_hex(reg);
-					} else {
+					if (strlen(preg) > strlen(pbuf)) { //strimp
 						table[i].cmd = str_to_16hex(reg);
-					}
-					if (0/*my_stricmp(pval,pbuf) < 0*/) {
-						table[i].data = str_to_hex(val);
 					} else {
+						table[i].cmd = str_to_hex(reg);
+					}
+					if (strlen(pval) > strlen(pbuf)) {
 						table[i].data = str_to_16hex(val);
+					} else {
+						table[i].data = str_to_hex(val);
 					}
 					i++;
 					if(i > 128)
@@ -555,14 +555,14 @@ int main(int argc, char **argv)
 	{
 		case I2C_SET:
 			if(configfile_status)
-				push_table(ctable, sizeof(ctable)/sizeof(setting_table));
+				push_table(ctable, table_len);
 			else
 				push_table(init_table, sizeof(init_table)/sizeof(setting_table));
 		break;
 
 		case I2C_GET:
 			if(configfile_status)
-				dump_reg_table(ctable, sizeof(ctable)/sizeof(setting_table));
+				dump_reg_table(ctable, table_len);
 			else
 				dump_reg_table(init_table, sizeof(init_table)/sizeof(setting_table));
 	    break;
@@ -573,21 +573,21 @@ int main(int argc, char **argv)
 
 		case I2C_16B_DUMP:
 			if(configfile_status)
-				dump_16b_reg_table(ctable, sizeof(ctable)/sizeof(setting_table));
+				dump_16b_reg_table(ctable, table_len);
 			else
 				dump_16b_reg_table(init_table, sizeof(init_table)/sizeof(setting_table));
 		break;
 
 		case I2C_16B_SET:
 			if(configfile_status)
-				push_16b_table(ctable, sizeof(ctable)/sizeof(setting_table));
+				push_16b_table(ctable, table_len);
 			else
 				push_16b_table(init_table, sizeof(init_table)/sizeof(setting_table));
 		break;
 
 		case I2C_16B_GET:
 			if(configfile_status)
-				dump_16b_reg_table(ctable, sizeof(ctable)/sizeof(setting_table));
+				dump_16b_reg_table(ctable, table_len);
 			else
 				dump_16b_reg_table(init_table, sizeof(init_table)/sizeof(setting_table));
 	    break;
