@@ -1,0 +1,50 @@
+	//Set broadcast address
+	//LINK0, Ser mapping address=0x8A, Ser Address=0x82; Sensor mapping address=0x62; sensor address=0x6C,
+	write_cmos_sensor(0x0A,0xF1); // enable LINK0 Reverse channel
+	mdelay(5); //delay 5ms
+	write_cmos_max96705_sensor(0x09,0x62); //Defined sensor mapping address
+	write_cmos_max96705_sensor(0x0A,0x6C); //Defined sensor address
+	write_cmos_max96705_sensor(0x0B,0x8A); //Denfined Ser mapping address
+	write_cmos_max96705_sensor(0x0C,0x82); //Denfined Ser address
+	write_cmos_max96705_sensor(0x00,0x82); // Set Ser address
+
+	//LINK1, Ser mapping address=0x8A, Ser Address=0x84; Sensor mapping address=0x64; sensor address=0x6C,
+	write_cmos_sensor(0x0A,0xF2); // enable LINK0 Reverse channel
+	mdelay(5); //delay 5ms
+	write_cmos_max96705_sensor(0x09,0x64); //Defined sensor mapping address
+	write_cmos_max96705_sensor(0x0A,0x6C); //Defined sensor address
+	write_cmos_max96705_sensor(0x0B,0x8A); //Denfined Ser mapping address
+	write_cmos_max96705_sensor(0x0C,0x84); //Denfined Ser address
+	write_cmos_max96705_sensor(0x00,0x84); // Set Ser address
+
+	//LINK2, Ser mapping address=0x8A, Ser Address=0x86; Sensor mapping address=0x66; sensor address=0x6C,
+	write_cmos_sensor(0x0A,0xF4); // enable LINK0 Reverse channel
+	mdelay(5); //delay 5ms
+	write_cmos_max96705_sensor(0x09,0x66); //Defined sensor mapping address
+	write_cmos_max96705_sensor(0x0A,0x6C); //Defined sensor address
+	write_cmos_max96705_sensor(0x0B,0x8A); //Denfined Ser mapping address
+	write_cmos_max96705_sensor(0x0C,0x86); //Denfined Ser address
+	write_cmos_max96705_sensor(0x00,0x86); // Set Ser address
+	//LINK3, Ser mapping address=0x8A, Ser Address=0x88; Sensor mapping address=0x68; sensor address=0x6C,
+	write_cmos_sensor(0x0A,0xF8); // enable LINK0 Reverse channel
+	mdelay(5); //delay 5ms
+	write_cmos_max96705_sensor(0x09,0x68); //Defined sensor mapping address
+	write_cmos_max96705_sensor(0x0A,0x6C); //Defined sensor address
+	write_cmos_max96705_sensor(0x0B,0x8A); //Denfined Ser mapping address
+	write_cmos_max96705_sensor(0x0C,0x88); //Denfined Ser address
+	write_cmos_max96705_sensor(0x00,0x88); // Set Ser address
+
+	//Enable all control channel
+	write_cmos_sensor(0x0A,0xFF); //enable LINK0/1/2/3
+	mdelay(2); //delay 2ms
+
+	//Switch configure link to video link
+	bridge_i2c_write_broadcast(0x04,0x83); //use the boardcast address to set Ser register
+	mdelay(5); //delay 5ms
+
+	//Change MAX96705 configure link to video link
+	// write_cmos_max96705_sensor(0x04,0x83);
+	// mdelay(5);
+
+	write_cmos_sensor(0x15,0x1B);
+	//mdelay(10);
